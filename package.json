@@ -3,7 +3,10 @@
   "version": "1.0.0",
   "description": "first project",
   "dependencies": {
-    "express": "^4.18.1"
+    "express": "^4.18.1",
+    "body-parser": "^1.15.2",
+    "cookie-parser": "^1.4.3",
+    "fcc-express-bground": "https://github.com/freeCodeCamp/fcc-express-bground-pkg.git"
   },
   "main": "home.html",
   "scripts": {
@@ -16,7 +19,8 @@
   "keywords": [
     "learn",
     "node",
-    "js"
+    "js",
+    "freecodecamp"
   ],
   "author": "thuan.nv",
   "license": "ISC",
