@@ -1,31 +1,33 @@
 {
-  "name": "first_project",
-  "version": "1.0.0",
-  "description": "first project",
-  "dependencies": {
-    "express": "^4.18.1",
-    "body-parser": "^1.15.2",
-    "cookie-parser": "^1.4.3",
-    "fcc-express-bground": "https://github.com/freeCodeCamp/fcc-express-bground-pkg.git"
-  },
-  "main": "home.html",
-  "scripts": {
-    "start": "node server.js"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/thuanbka/Project-Node-JS.git"
-  },
-  "keywords": [
-    "learn",
-    "node",
-    "js",
-    "freecodecamp"
-  ],
-  "author": "thuan.nv",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/thuanbka/Project-Node-JS/issues"
-  },
-  "homepage": "https://github.com/thuanbka/Project-Node-JS#readme"
+    "name": "first_project",
+    "version": "1.0.0",
+    "description": "first project",
+    "dependencies": {
+        "express": "^4.18.1",
+        "body-parser": "^1.15.2",
+        "cookie-parser": "^1.4.3",
+        "dotenv": "^8.2.0",
+        "mongodb": "^3.0.0",
+        "mongoose": "^5.6.5"
+    },
+    "main": "home.html",
+    "scripts": {
+        "start": "node server.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/thuanbka/Project-Node-JS.git"
+    },
+    "keywords": [
+        "learn",
+        "node",
+        "js",
+        "freecodecamp"
+    ],
+    "author": "thuan.nv",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/thuanbka/Project-Node-JS/issues"
+    },
+    "homepage": "https://github.com/thuanbka/Project-Node-JS#readme"
 }

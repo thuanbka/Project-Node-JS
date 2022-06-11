@@ -1,28 +1,93 @@
-var express = require('express');
-var app = express();
+require('dotenv').config();
+var mongoose = require("mongoose");
 
-app.route('/home')
-.get(function (req, res) {
-  res.sendFile(process.cwd() + '/views/home.html');
-})
+if (process.env.MONGO_URI) {
+    console.log(process.env.MONGO_URI);
+    mongoose.connect(process.env.MONGO_URI);
+} else {
+    console.log("Can't get link URI mongoose.")
+}
 
-app.get("/",function (req, res) {
-  res.send("Hello world");
-})
+const Schema = mongoose.Schema;
 
-// Respond not found to all the wrong routes
-app.use(function (req, res, next) {
-res.status(404);
-res.type('txt').send('Not found');
+const personSchema = new Schema({
+    name: String,
+    age: Number,
+    favoriteFoods: [String]
 });
 
-// Error Middleware
-app.use(function (err, req, res, next) {
-if (err) {
-  res.status(err.status || 500)
-    .type('txt')
-    .send(err.message || 'SERVER ERROR');
-}
-})
+const Person = mongoose.model("Person", personSchema);
 
-module.exports = app;
+const createAndSavePerson = (done) => {
+    var person = new Person({ name: "thuan", age: 23, favoriteFoods: ["Hamberger", "Noodle"] });
+    person.save(function(err, data) {
+        if (err) {
+            return console.err(err);
+        } else {
+            done(null, data);
+        }
+    });
+};
+
+const createManyPeople = (arrayOfPeople, done) => {
+    Person.create(arrayOfPeople, function(err, data) {
+        if (err) {
+            return console.err(err);
+        } else {
+            done(null, data);
+        }
+    });
+};
+
+const findPeopleByName = (personName, done) => {
+    done(null /*, data*/ );
+};
+
+const findOneByFood = (food, done) => {
+    done(null /*, data*/ );
+};
+
+const findPersonById = (personId, done) => {
+    done(null /*, data*/ );
+};
+
+const findEditThenSave = (personId, done) => {
+    const foodToAdd = "hamburger";
+
+    done(null /*, data*/ );
+};
+
+const findAndUpdate = (personName, done) => {
+    const ageToSet = 20;
+
+    done(null /*, data*/ );
+};
+
+const removeById = (personId, done) => {
+    done(null /*, data*/ );
+};
+
+const removeManyPeople = (done) => {
+    const nameToRemove = "Mary";
+
+    done(null /*, data*/ );
+};
+
+const queryChain = (done) => {
+    const foodToSearch = "burrito";
+
+    done(null /*, data*/ );
+};
+
+
+exports.PersonModel = Person;
+exports.createAndSavePerson = createAndSavePerson;
+exports.findPeopleByName = findPeopleByName;
+exports.findOneByFood = findOneByFood;
+exports.findPersonById = findPersonById;
+exports.findEditThenSave = findEditThenSave;
+exports.findAndUpdate = findAndUpdate;
+exports.createManyPeople = createManyPeople;
+exports.removeById = removeById;
+exports.removeManyPeople = removeManyPeople;
+exports.queryChain = queryChain;
