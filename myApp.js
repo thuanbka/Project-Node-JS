@@ -8,6 +8,10 @@ if (process.env.MONGO_URI) {
     console.log("Can't get link URI mongoose.")
 }
 
+const fullNameDays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+const shortNameDays = ["Sun", "Mon", "Tues", "Wed", "Thur", "Fri", "Sat"];
+const fullNamemonths = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+const shortNamemonths = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 const Schema = mongoose.Schema;
 
 const personSchema = new Schema({
@@ -136,6 +140,35 @@ const queryChain = (done) => {
         });
 };
 
+const formatDate = (data_input) => {
+    let time_utc = " 00:00:00 GMT";
+    let date;
+    if (data_input != null) {
+        if (!isNaN(data_input)) {
+            data_input = parseInt(data_input);
+        }
+        date = new Date(data_input);
+    } else {
+        date = new Date();
+        time_utc = " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds() + " GMT";
+    }
+    const unixTimestamp = Math.floor(date.getTime());
+
+    if (isNaN(unixTimestamp)) {
+        return { error: "Invalid Date" };
+    }
+    let dd = date.getDate();
+    if (dd < 10) {
+        dd = '0' + dd;
+    }
+    let utc = shortNameDays[date.getDay()] + ", " + dd + " " + shortNamemonths[date.getMonth()] + " " + date.getFullYear() + time_utc;
+    var object = {
+        "unix": unixTimestamp,
+        "utc": utc
+    }
+
+    return object;
+}
 
 exports.PersonModel = Person;
 exports.createAndSavePerson = createAndSavePerson;
@@ -148,3 +181,4 @@ exports.createManyPeople = createManyPeople;
 exports.removeById = removeById;
 exports.removeManyPeople = removeManyPeople;
 exports.queryChain = queryChain;
+exports.formatDate = formatDate;

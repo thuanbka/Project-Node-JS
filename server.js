@@ -26,6 +26,9 @@ const enableCORS = function(req, res, next) {
     next();
 };
 
+var cors = require('cors');
+app.use(cors({ optionsSuccessStatus: 200 }));
+
 const TIMEOUT = 10000;
 
 app.use(bodyParser.urlencoded({ extended: "false" }));
@@ -394,6 +397,13 @@ router.post("/query-tools", function(req, res, next) {
         });
     });
 });
+
+const formatDate = require("./myApp.js").formatDate;
+app.get("/api/:date?", function(req, res) {
+    return res.json(formatDate(req.params.date));
+});
+
+
 
 app.use("/_api", enableCORS, router);
 
