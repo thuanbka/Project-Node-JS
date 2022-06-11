@@ -1,5 +1,4 @@
 require('dotenv').config();
-const req = require('express/lib/request');
 var mongoose = require("mongoose");
 
 if (process.env.MONGO_URI) {
@@ -180,6 +179,20 @@ const getInfoHeader = (data) => {
     return object;
 }
 
+const analysFile = (data) => {
+    object = {
+        "name": data.upfile.originalFilename,
+        "type": data.upfile.mimetype,
+        "size": data.upfile.size
+    }
+    console.log(data.upfile);
+    console.log(object);
+    if (object.name == null && object.type == null && object.size == null) {
+        return "Please upload a file!!!"
+    }
+    return object;
+}
+
 exports.PersonModel = Person;
 exports.createAndSavePerson = createAndSavePerson;
 exports.findPeopleByName = findPeopleByName;
@@ -193,3 +206,4 @@ exports.removeManyPeople = removeManyPeople;
 exports.queryChain = queryChain;
 exports.formatDate = formatDate;
 exports.getInfoHeader = getInfoHeader;
+exports.analysFile = analysFile;

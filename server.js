@@ -10,6 +10,7 @@ const fs = require("fs");
 const path = require("path");
 const bodyParser = require("body-parser");
 const router = express.Router();
+let formidable = require('formidable');
 
 const enableCORS = function(req, res, next) {
     if (!process.env.DISABLE_XORIGIN) {
@@ -43,6 +44,11 @@ app.use("/public", express.static(__dirname + "/public"));
 app.route('/home')
     .get(function(req, res) {
         res.sendFile(process.cwd() + '/views/home.html');
+    });
+
+app.route('/demo_upload')
+    .get(function(req, res) {
+        res.sendFile(process.cwd() + '/views/page_upload.html');
     });
 
 router.get("/file/*?", function(req, res, next) {
@@ -409,6 +415,15 @@ app.get("/api/:date?", function(req, res) {
     return res.json(formatDate(req.params.date));
 });
 
+
+const analysFile = require("./myApp.js").analysFile;
+app.post("/api/fileanalyse", function(req, res) {
+
+    let form = new formidable.IncomingForm();
+    form.parse(req, function(error, fields, file) {
+        return res.json(analysFile(file));
+    });
+});
 
 app.use("/_api", enableCORS, router);
 
