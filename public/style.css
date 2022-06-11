@@ -37,3 +37,54 @@ input#button {
     width: 60%;
     min-width: 400px;
 }
+
+#exercise_tracker_page form {
+    display: inline-block;
+    border: 1px solid #fff;
+    border-radius: 20px;
+    background-color: #87d37c;
+    max-width: 340px;
+    width: 100%;
+    padding: 10px;
+    margin: 0 25px 0 25px;
+}
+
+#exercise_tracker_page input {
+    display: block;
+    position: relative;
+    margin: 10px auto;
+    border-radius: 5px;
+    border: 1px solid blue;
+    font-size: 18px;
+    padding: 5px;
+}
+
+#exercise_tracker_page input[type="submit"] {
+    cursor: pointer;
+    background-color: #E4F1FE;
+    border: 1px solid grey;
+    box-shadow: 2px 2px #999;
+    padding: 3px 15px 3px 15px;
+}
+
+#url_short form {
+    margin: 10px auto;
+    padding: 20px;
+    max-width: 600px;
+    border: solid 1px #fff;
+    border-radius: 5px;
+}
+
+#url_short label {
+    margin-right: 10px;
+}
+
+#url_short input {
+    padding: 5px;
+    display: inline-block;
+}
+
+#url_short input[type='text'] {
+    width: 220px;
+    text-align: center;
+}

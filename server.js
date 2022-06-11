@@ -46,6 +46,16 @@ app.route('/home')
         res.sendFile(process.cwd() + '/views/home.html');
     });
 
+app.route('/exercise_tracker')
+    .get(function(req, res) {
+        res.sendFile(process.cwd() + '/views/exercise_tracker.html');
+    });
+
+app.route('/url_shortener')
+    .get(function(req, res) {
+        res.sendFile(process.cwd() + '/views/url_shortener.html');
+    });
+
 app.route('/demo_upload')
     .get(function(req, res) {
         res.sendFile(process.cwd() + '/views/page_upload.html');
@@ -72,6 +82,9 @@ router.get("/is-mongoose-ok", function(req, res) {
 });
 
 const Person = require("./myApp.js").PersonModel;
+const URLModel = require("./myApp.js").URLSHORTModel;
+const User = require("./myApp.js").UserModel;
+const Exercise = require("./myApp.js").ExerciseModel;
 
 router.use(function(req, res, next) {
     if (req.method !== "OPTIONS" && Person.modelName !== "Person") {
@@ -83,9 +96,14 @@ router.use(function(req, res, next) {
 router.post("/mongoose-model", function(req, res, next) {
     // try to create a new instance based on their model
     // verify it's correctly defined in some way
-    let p;
-    p = new Person(req.body);
-    res.json(p);
+    let object;
+    object = {
+        "person": new Person(req.body),
+        "url_short_cur": new URLModel(req.body),
+        "user": new User(req.body),
+        "exercise": new Exercise(req.body),
+    }
+    res.json(object);
 });
 
 const createPerson = require("./myApp.js").createAndSavePerson;
@@ -417,11 +435,52 @@ app.get("/api/:date?", function(req, res) {
 
 
 const analysFile = require("./myApp.js").analysFile;
-app.post("/api/fileanalyse", function(req, res) {
+app.post("/demo_upload/api/fileanalyse", function(req, res) {
 
     let form = new formidable.IncomingForm();
     form.parse(req, function(error, fields, file) {
         return res.json(analysFile(file));
+    });
+});
+
+const createShortURL = require("./myApp.js").createAndSaveShortURL;
+app.post("/url_shortener/api/shorturl", function(req, res, next) {
+    // in case of incorrect function use wait timeout then respond
+    let t = setTimeout(() => {
+        next({ message: "timeout" });
+    }, TIMEOUT);
+    createShortURL(req.body, function(err, data) {
+        clearTimeout(t);
+        if (err) {
+            return next(err);
+        }
+        if (!data) {
+            console.log("Missing `done()` argument");
+            return next({ message: "Missing callback argument" });
+        }
+        return res.json(data);
+    });
+});
+
+const getURLFromShort = require("./myApp.js").getURLFromShort;
+app.get("/url_shortener/api/shorturl/:short_url?", function(req, res, next) {
+    let t = setTimeout(() => {
+        next({ message: "timeout" });
+    }, TIMEOUT);
+    getURLFromShort(req.params.short_url, function(err, data) {
+        clearTimeout(t);
+        if (err) {
+            return next(err);
+        }
+        if (!data) {
+            console.log("Missing `done()` argument");
+            return next({ message: "Missing callback argument" });
+        }
+        if (data.original_url) {
+            res.redirect(data.original_url);
+        } else {
+            return res.json(data);
+        }
     });
 });
 

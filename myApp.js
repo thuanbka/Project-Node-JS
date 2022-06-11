@@ -1,6 +1,7 @@
 require('dotenv').config();
 var mongoose = require("mongoose");
-
+const dns = require('dns');
+const { error } = require('console');
 if (process.env.MONGO_URI) {
     console.log(process.env.MONGO_URI);
     mongoose.connect(process.env.MONGO_URI);
@@ -20,7 +21,26 @@ const personSchema = new Schema({
     favoriteFoods: [String]
 });
 
+const urlSchema = new Schema({
+    "original_url": String,
+    "short_url": String
+});
+
+const userSchema = new Schema({
+    "username": String
+});
+
+const ExerciseSchema = new Schema({
+    "_id": { type: String, required: true },
+    "description": { type: String, required: true },
+    "duration": { type: String, required: true },
+    "date": { type: String, required: true }
+});
+
 const Person = mongoose.model("Person", personSchema);
+const URLModel = mongoose.model("Url", urlSchema);
+const User = mongoose.model("User", userSchema);
+const Exercise = mongoose.model("Exercise", ExerciseSchema);
 
 const createAndSavePerson = (done) => {
     var person = new Person({ name: "thuan", age: 23, favoriteFoods: ["Hamberger", "Noodle"] });
@@ -185,15 +205,101 @@ const analysFile = (data) => {
         "type": data.upfile.mimetype,
         "size": data.upfile.size
     }
-    console.log(data.upfile);
-    console.log(object);
     if (object.name == null && object.type == null && object.size == null) {
         return "Please upload a file!!!"
     }
     return object;
 }
 
+const createAndSaveShortURL = (req, done) => {
+    let url = req.url;
+    let data;
+    if (isUrlValid(url)) {
+        let original_url = url.split("/")[2];
+        const options = {
+            all: true,
+        };
+        dns.lookup(original_url, options, (err, addresses) => {
+            if (err) {
+                data = { error: "Invalid Hostname" };
+                done(null, data);
+            } else {
+                URLModel.find({ original_url: url }, function(err, data) {
+                    if (err) {
+                        done(null, err);
+                    } else {
+                        if (data.length > 0) {
+                            done(null, data[0]);
+                        } else {
+                            urlModel = new URLModel({
+                                "original_url": url,
+                                "short_url": stringToHashConversion(url + new Date().toDateString())
+                            });
+                            urlModel.save(function(err, data) {
+                                if (err) {
+                                    return console.err(err);
+                                } else {
+                                    done(null, {
+                                        "original_url": url,
+                                        "short_url": urlModel.short_url
+                                    });
+                                }
+                            });
+                        }
+                    }
+
+                });
+            }
+        });
+    } else {
+        data = { error: 'invalid url' };
+        done(null, data);
+    }
+};
+
+const getURLFromShort = (short_url, done) => {
+    URLModel.find({ short_url: short_url }, function(err, data) {
+        if (err) {
+            done(null, { "Err:": err });
+        } else {
+            if (data.length == 0) {
+                return done(null, { "Not Found: ": short_url });
+            } else {
+                return done(null, data[0]);
+            }
+        }
+    });
+}
+
+function isUrlValid(userInput) {
+    var res = userInput.match(/(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g);
+    if (res == null) {
+        return false;
+    } else {
+        return true;
+    }
+}
+
+function stringToHashConversion(string) {
+    var hashVal = 0;
+    if (string.length == 0) return hashVal;
+    for (i = 0; i < string.length; i++) {
+        char = string.charCodeAt(i);
+        hashVal = ((hashVal << 5) - hashVal) + char;
+        hashVal = hashVal & hashVal;
+    }
+    if (hashVal < 0) {
+        hashVal = -hashVal;
+    }
+    return hashVal;
+}
+
+
+
 exports.PersonModel = Person;
+exports.URLSHORTModel = URLModel;
+exports.UserModel = User;
+exports.ExerciseModel = Exercise;
 exports.createAndSavePerson = createAndSavePerson;
 exports.findPeopleByName = findPeopleByName;
 exports.findOneByFood = findOneByFood;
@@ -207,3 +313,5 @@ exports.queryChain = queryChain;
 exports.formatDate = formatDate;
 exports.getInfoHeader = getInfoHeader;
 exports.analysFile = analysFile;
+exports.createAndSaveShortURL = createAndSaveShortURL;
+exports.getURLFromShort = getURLFromShort;
