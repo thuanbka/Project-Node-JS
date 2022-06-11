@@ -398,11 +398,16 @@ router.post("/query-tools", function(req, res, next) {
     });
 });
 
+const getInfoHeader = require("./myApp.js").getInfoHeader;
+app.get("/api/whoami", function(req, res) {
+    return res.json(getInfoHeader(req));
+});
+
+
 const formatDate = require("./myApp.js").formatDate;
 app.get("/api/:date?", function(req, res) {
     return res.json(formatDate(req.params.date));
 });
-
 
 
 app.use("/_api", enableCORS, router);

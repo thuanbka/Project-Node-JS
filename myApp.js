@@ -1,4 +1,5 @@
 require('dotenv').config();
+const req = require('express/lib/request');
 var mongoose = require("mongoose");
 
 if (process.env.MONGO_URI) {
@@ -170,6 +171,15 @@ const formatDate = (data_input) => {
     return object;
 }
 
+const getInfoHeader = (data) => {
+    object = {
+        "ipaddress": data.socket.localAddress,
+        "language": data.get("Accept-Language"),
+        "software": data.get('User-Agent')
+    }
+    return object;
+}
+
 exports.PersonModel = Person;
 exports.createAndSavePerson = createAndSavePerson;
 exports.findPeopleByName = findPeopleByName;
@@ -182,3 +192,4 @@ exports.removeById = removeById;
 exports.removeManyPeople = removeManyPeople;
 exports.queryChain = queryChain;
 exports.formatDate = formatDate;
+exports.getInfoHeader = getInfoHeader;
