@@ -484,6 +484,83 @@ app.get("/url_shortener/api/shorturl/:short_url?", function(req, res, next) {
     });
 });
 
+const createExercise = require("./myApp.js").createExercise;
+app.post("/exercise_tracker/api/users/:id/exercises", function(req, res, next) {
+    let t = setTimeout(() => {
+        next({ message: "timeout" });
+    }, TIMEOUT);
+    createExercise(req.body, function(err, data) {
+        clearTimeout(t);
+        if (err) {
+            return next(err);
+        }
+        if (!data) {
+            console.log("Missing `done()` argument");
+            return next({ message: "Missing callback argument" });
+        }
+        return res.json(data);
+    });
+});
+
+const createUser = require("./myApp.js").createUser;
+app.post("/exercise_tracker/api/users/", function(req, res, next) {
+    let t = setTimeout(() => {
+        next({ message: "timeout" });
+    }, TIMEOUT);
+    createUser(req.body.username, function(err, data) {
+        clearTimeout(t);
+        if (err) {
+            return next(err);
+        }
+        if (!data) {
+            console.log("Missing `done()` argument");
+            return next({ message: "Missing callback argument" });
+        } else {
+            return res.json(data);
+        }
+    });
+});
+
+const getListUsers = require("./myApp.js").getListUsers;
+app.get("/exercise_tracker/api/users/", function(req, res, next) {
+    let t = setTimeout(() => {
+        next({ message: "timeout" });
+    }, TIMEOUT);
+    getListUsers(function(err, data) {
+        clearTimeout(t);
+        if (err) {
+            return next(err);
+        }
+        if (!data) {
+            console.log("Missing `done()` argument");
+            return next({ message: "Missing callback argument" });
+        } else {
+            return res.json(data);
+        }
+    });
+});
+
+const getListLogsUser = require("./myApp.js").getListLogsUser;
+app.get("/exercise_tracker/api/users/:id/logs/", function(req, res, next) {
+    let t = setTimeout(() => {
+        next({ message: "timeout" });
+    }, TIMEOUT);
+    getListLogsUser(req, function(err, data) {
+        clearTimeout(t);
+        if (err) {
+            return next(err);
+        }
+        if (!data) {
+            console.log("Missing `done()` argument");
+            return next({ message: "Missing callback argument" });
+        } else {
+            return res.json(data);
+        }
+    });
+});
+
+
+
 app.use("/_api", enableCORS, router);
 
 // Error handler

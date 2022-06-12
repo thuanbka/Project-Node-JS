@@ -271,6 +271,38 @@ const getURLFromShort = (short_url, done) => {
     });
 }
 
+const createExercise = (body, done) => {
+    let object = {
+        "infor": body,
+        "method": "Create Exercise"
+    }
+    return done(null, object);
+}
+
+const createUser = (username, done) => {
+    let object = {
+        "name": username,
+        "method": "Create User"
+    }
+    return done(null, object);
+}
+
+const getListUsers = (done) => {
+    let object = {
+        "method": "Get List Users"
+    }
+    return done(null, object);
+}
+
+const getListLogsUser = (req, done) => {
+    let object = {
+        "Querry": req.query,
+        "Parrams": req.params,
+        "method": "Get List Logs User"
+    }
+    return done(null, object);
+}
+
 function isUrlValid(userInput) {
     var res = userInput.match(/(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g);
     if (res == null) {
@@ -315,3 +347,7 @@ exports.getInfoHeader = getInfoHeader;
 exports.analysFile = analysFile;
 exports.createAndSaveShortURL = createAndSaveShortURL;
 exports.getURLFromShort = getURLFromShort;
+exports.createExercise = createExercise;
+exports.createUser = createUser;
+exports.getListUsers = getListUsers;
+exports.getListLogsUser = getListLogsUser;
