@@ -34,7 +34,8 @@ const ExerciseSchema = new Schema({
     "idUser": { type: String, required: true },
     "description": { type: String, required: true },
     "duration": { type: Number, required: true },
-    "date": { type: Number, required: true },
+    "date_milliseconds": { type: Number, required: true },
+    "date": { type: String, required: true },
 });
 
 const Person = mongoose.model("Person", personSchema);
@@ -304,7 +305,8 @@ const createExercise = (req, done) => {
                     "idUser": id,
                     "description": body.description,
                     "duration": parseInt(duration),
-                    "date": date
+                    "date_milliseconds": date,
+                    "date": new Date(date).toDateString()
                 });
                 exerciseModel.save(function(err, exercise) {
                     if (err) {
@@ -314,7 +316,7 @@ const createExercise = (req, done) => {
                             "username": user.username,
                             "duration": exercise.duration,
                             "description": exercise.description,
-                            "date": changeTimeToFormat(exercise.date),
+                            "date": exercise.date,
                             "_id": exercise.idUser
                         };
                         done(null, object);
@@ -337,6 +339,10 @@ const createUser = (username, done) => {
             if (err) {
                 return console.err(err);
             } else {
+                let object = {
+                    "username": data.username,
+                    "_id": data._id
+                }
                 done(null, data);
             }
         });
@@ -373,34 +379,26 @@ const getListLogsUser = (req, done) => {
         } else {
             if (user) {
                 Exercise.find({ idUser: id })
-                    .where('date').gte(from).lte(to)
+                    .where('date_milliseconds').gte(from).lte(to)
                     .limit(limit)
+                    .select({ _id: 0, idUser: 0, date_milliseconds: 0, __v: 0 })
                     .exec(function(err, data) {
                         if (err) {
                             done(null, { "Err:": err });
                         } else {
                             let username = user.username;
                             let count = data.length;
-                            let log = [];
-                            for (let x of data) {
-                                let object = {
-                                    "description": x.description,
-                                    "duration": x.duration,
-                                    "date": changeTimeToFormat(x.date)
-                                }
-                                log.push(object);
-                            }
                             let object = {
                                 "username": username,
                                 "count": count,
                                 "_id": id,
-                                "log": log
+                                "log": data
                             };
                             if (req.query.to) {
-                                object.to = changeTimeToFormat(to);
+                                object.to = new Date(to).toDateString();
                             }
                             if (req.query.from) {
-                                object.from = changeTimeToFormat(from);
+                                object.from = new Date(from).toDateString();
                             }
                             return done(null, object);
                         }
@@ -410,16 +408,6 @@ const getListLogsUser = (req, done) => {
             }
         }
     });
-}
-
-function changeTimeToFormat(time) {
-    let d = new Date(time);
-    let day = d.getDate();
-    if (day < 10) {
-        day = '0' + day;
-    }
-    let year = d.getFullYear();
-    return shortNameDays[d.getDay()] + " " + shortNamemonths[d.getMonth()] + " " + day + " " + year;
 }
 
 function isUrlValid(userInput) {
