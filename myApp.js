@@ -31,10 +31,10 @@ const userSchema = new Schema({
 });
 
 const ExerciseSchema = new Schema({
-    "_id": { type: String, required: true },
+    "idUser": { type: String, required: true },
     "description": { type: String, required: true },
-    "duration": { type: String, required: true },
-    "date": { type: String, required: true }
+    "duration": { type: Number, required: true },
+    "date": { type: Number, required: true },
 });
 
 const Person = mongoose.model("Person", personSchema);
@@ -271,6 +271,141 @@ const getURLFromShort = (short_url, done) => {
     });
 }
 
+const createExercise = (body, done) => {
+    let id = body.id;
+    let date = body.date;
+    let duration = body.duration;
+    if (date == "") {
+        let d = new Date();
+        let day = d.getDate();
+        let month = d.getMonth() + 1;
+        let year = d.getFullYear();
+        date = new Date(year + "-" + month + "-" + day);
+    } else {
+        date = new Date(date);
+    }
+
+    date = date.getTime();
+    if (isNaN(date)) {
+        return done(null, { error: "Invalid Date" });
+    }
+
+    if (isNaN(duration)) {
+        return done(null, { error: "Invalid Duration" });
+    }
+
+    User.findById(id, function(err, user) {
+        if (err) {
+            return console.err(err);
+        } else {
+            if (user) {
+                let exerciseModel = new Exercise({
+                    "idUser": id,
+                    "description": body.description,
+                    "duration": parseInt(duration),
+                    "date": date
+                });
+                exerciseModel.save(function(err, exercise) {
+                    if (err) {
+                        return console.err(err);
+                    } else {
+                        let object = {
+                            "username": user.username,
+                            "duration": exercise.duration,
+                            "description": exercise.description,
+                            "date": changeTimeToFormat(exercise.date),
+                            "_id": exercise.idUser
+                        };
+                        done(null, object);
+                    }
+                });
+            } else {
+                done(null, "Please enter an exact id!!!")
+            }
+        }
+    });
+}
+
+const createUser = (username, done) => {
+
+    if (username) {
+        let user = new User({
+            "username": username
+        });
+        user.save(function(err, data) {
+            if (err) {
+                return console.err(err);
+            } else {
+                done(null, data);
+            }
+        });
+    } else {
+        return done(null, "Please insert a username!!!");
+    }
+}
+
+const getListUsers = (done) => {
+    User.find({}, function(err, data) {
+        if (err) {
+            return console.err(err);
+        } else {
+            return done(null, data);
+        }
+    });
+}
+
+const getListLogsUser = (req, done) => {
+    let id = req.params.id;
+    let to = req.query.to;
+    let from = req.query.from;
+    let limit = req.query.limit;
+
+    User.findById(id, function(err, user) {
+        if (err) {
+            return console.err(err);
+        } else {
+            if (user) {
+                Exercise.find({ idUser: id }, function(err, data) {
+                    if (err) {
+                        done(null, { "Err:": err });
+                    } else {
+                        let username = user.username;
+                        let count = data.length;
+                        let log = [];
+                        for (let x of data) {
+                            let object = {
+                                "description": x.description,
+                                "duration": x.duration,
+                                "date": changeTimeToFormat(x.date)
+                            }
+                            log.push(object);
+                        }
+                        let object = {
+                            "username": username,
+                            "count": count,
+                            "_id": id,
+                            "log": log
+                        };
+                        return done(null, object);
+                    }
+                });
+            } else {
+                done(null, "No User Exist!!")
+            }
+        }
+    });
+}
+
+function changeTimeToFormat(time) {
+    let d = new Date(time);
+    let day = d.getDate();
+    if (day < 10) {
+        day = '0' + day;
+    }
+    let year = d.getFullYear();
+    return shortNameDays[d.getDay()] + " " + shortNamemonths[d.getMonth()] + " " + day + " " + year;
+}
+
 function isUrlValid(userInput) {
     var res = userInput.match(/(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g);
     if (res == null) {
@@ -315,3 +450,7 @@ exports.getInfoHeader = getInfoHeader;
 exports.analysFile = analysFile;
 exports.createAndSaveShortURL = createAndSaveShortURL;
 exports.getURLFromShort = getURLFromShort;
+exports.createExercise = createExercise;
+exports.createUser = createUser;
+exports.getListUsers = getListUsers;
+exports.getListLogsUser = getListLogsUser;
