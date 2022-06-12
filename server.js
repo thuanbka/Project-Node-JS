@@ -489,7 +489,7 @@ app.post("/exercise_tracker/api/users/:id/exercises", function(req, res, next) {
     let t = setTimeout(() => {
         next({ message: "timeout" });
     }, TIMEOUT);
-    createExercise(req.body, function(err, data) {
+    createExercise(req, function(err, data) {
         clearTimeout(t);
         if (err) {
             return next(err);

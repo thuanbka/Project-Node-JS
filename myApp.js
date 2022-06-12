@@ -271,8 +271,9 @@ const getURLFromShort = (short_url, done) => {
     });
 }
 
-const createExercise = (body, done) => {
-    let id = body.id;
+const createExercise = (req, done) => {
+    let body = req.body;
+    let id = req.params.id;
     let date = body.date;
     let duration = body.duration;
     if (date == "") {
