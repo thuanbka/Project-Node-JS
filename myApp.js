@@ -396,14 +396,11 @@ const getListLogsUser = (req, done) => {
                                 "_id": id,
                                 "log": log
                             };
-                            if (req.query.limit) {
-                                object.limit = limit;
-                            }
                             if (req.query.to) {
-                                object.to = to;
+                                object.to = changeTimeToFormat(to);
                             }
                             if (req.query.from) {
-                                object.from = from;
+                                object.from = changeTimeToFormat(from);
                             }
                             return done(null, object);
                         }
