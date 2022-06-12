@@ -276,7 +276,7 @@ const createExercise = (req, done) => {
     let id = req.params.id;
     let date = body.date;
     let duration = body.duration;
-    if (date == "") {
+    if (date == null || date == "") {
         let d = new Date();
         let day = d.getDate();
         let month = d.getMonth() + 1;
@@ -357,39 +357,57 @@ const getListUsers = (done) => {
 
 const getListLogsUser = (req, done) => {
     let id = req.params.id;
-    let to = req.query.to;
-    let from = req.query.from;
-    let limit = req.query.limit;
+    let to = Number.MAX_VALUE;;
+    let from = 0;
+    if (req.query.to) {
+        to = new Date(req.query.to).getTime();
+    }
+    if (req.query.from) {
+        from = new Date(req.query.from).getTime();
+    }
+    let limit = parseInt(req.query.limit);
 
     User.findById(id, function(err, user) {
         if (err) {
             return console.err(err);
         } else {
             if (user) {
-                Exercise.find({ idUser: id }, function(err, data) {
-                    if (err) {
-                        done(null, { "Err:": err });
-                    } else {
-                        let username = user.username;
-                        let count = data.length;
-                        let log = [];
-                        for (let x of data) {
-                            let object = {
-                                "description": x.description,
-                                "duration": x.duration,
-                                "date": changeTimeToFormat(x.date)
+                Exercise.find({ idUser: id })
+                    .where('date').gte(from).lte(to)
+                    .limit(limit)
+                    .exec(function(err, data) {
+                        if (err) {
+                            done(null, { "Err:": err });
+                        } else {
+                            let username = user.username;
+                            let count = data.length;
+                            let log = [];
+                            for (let x of data) {
+                                let object = {
+                                    "description": x.description,
+                                    "duration": x.duration,
+                                    "date": changeTimeToFormat(x.date)
+                                }
+                                log.push(object);
                             }
-                            log.push(object);
+                            let object = {
+                                "username": username,
+                                "count": count,
+                                "_id": id,
+                                "log": log
+                            };
+                            if (req.query.limit) {
+                                object.limit = limit;
+                            }
+                            if (req.query.to) {
+                                object.to = to;
+                            }
+                            if (req.query.from) {
+                                object.from = from;
+                            }
+                            return done(null, object);
                         }
-                        let object = {
-                            "username": username,
-                            "count": count,
-                            "_id": id,
-                            "log": log
-                        };
-                        return done(null, object);
-                    }
-                });
+                    });
             } else {
                 done(null, "No User Exist!!")
             }
