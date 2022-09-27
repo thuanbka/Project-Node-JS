@@ -453,7 +453,8 @@ app.post("/url_shortener/api/shorturl", function(req, res, next) {
         clearTimeout(t);
         if (err) {
             res.status(400);
-            return next(err);
+//             return next(err);
+            return res.json(err);
         }
         if (!data) {
             console.log("Missing `done()` argument");
