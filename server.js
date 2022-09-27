@@ -452,6 +452,7 @@ app.post("/url_shortener/api/shorturl", function(req, res, next) {
     createShortURL(req.body, function(err, data) {
         clearTimeout(t);
         if (err) {
+            res.status(400);
             return next(err);
         }
         if (!data) {
