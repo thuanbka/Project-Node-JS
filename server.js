@@ -446,16 +446,16 @@ app.post("/demo_upload/api/fileanalyse", function(req, res) {
 const createShortURL = require("./myApp.js").createAndSaveShortURL;
 app.post("/url_shortener/api/shorturl", function(req, res, next) {
     // in case of incorrect function use wait timeout then respond
-    res.status(500);
+    //res.status(500);
     let t = setTimeout(() => {
         next({ message: "timeout" });
     }, TIMEOUT);
     createShortURL(req.body, function(err, data) {
         clearTimeout(t);
         if (err) {
-            res.status(400);
-//             return next(err);
-            return res.json(err);
+           // res.status(400);
+            return next(err);
+           // return res.json(err);
         }
         if (!data) {
             console.log("Missing `done()` argument");
