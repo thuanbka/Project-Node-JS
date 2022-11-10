@@ -1,0 +1,97 @@
+body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+    font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+}
+
+#app {
+    text-align: center;
+    /* display: none; */
+}
+
+.football {
+    margin-top: 50px;
+    text-align: center;
+}
+
+.temp::before {
+    content: "";
+    display: inline-block;
+    padding-right: 3px;
+    vertical-align: middle;
+    width: 50px;
+    height: 50px;
+}
+
+.text::before {
+    background: url("../image/icons/icon.png") no-repeat;
+}
+
+.app::before {
+    background: url("../image/icons/red.png") no-repeat;
+}
+
+.Pokedex {
+    background: linear-gradient(to right, #d4d3dd, #efefbb);
+    font-family: 'Lato', sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+}
+
+.Pokedex h1 {
+    letter-spacing: 3px;
+}
+
+.Pokedex .poke-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin: 0 auto;
+    max-width: 90%;
+}
+
+.Pokedex .pokemon {
+    border-radius: 10px;
+    box-shadow: 0 3px 15px rgba(100, 100, 100, 0.5);
+    margin: 10px;
+    padding: 20px;
+    text-align: center;
+}
+
+.Pokedex .pokemon .img-container {
+    background-color: rgba(255, 255, 255, 0.6);
+    border-radius: 50%;
+    width: 120px;
+    height: 120px;
+    text-align: center;
+    display: inline-block;
+}
+
+.Pokedex .pokemon .img-container img {
+    max-width: 90%;
+    margin-top: 20px;
+}
+
+.Pokedex .pokemon .info {
+    margin-top: 20px;
+}
+
+.Pokedex .pokemon .info .number {
+    background-color: rgba(0, 0, 0, 0.1);
+    padding: 5px 10px;
+    border-radius: 10px;
+    font-size: 0.8em;
+}
+
+.Pokedex .pokemon .info .name {
+    margin: 15px 0 7px;
+    letter-spacing: 1px;
+}
