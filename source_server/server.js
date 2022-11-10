@@ -36,10 +36,10 @@ app.use(bodyParser.urlencoded({ extended: "false" }));
 app.use(bodyParser.json());
 
 app.get("/", function(req, res) {
-    res.sendFile(path.join(__dirname, "views", "index.html"));
+    res.sendFile(path.join(__dirname, "../views", "home.html"));
 });
 
-app.use("/public", express.static(__dirname + "/public"));
+app.use("/public", express.static(path.join(__dirname, '../public')));
 
 app.route('/home')
     .get(function(req, res) {
@@ -446,16 +446,13 @@ app.post("/demo_upload/api/fileanalyse", function(req, res) {
 const createShortURL = require("./myApp.js").createAndSaveShortURL;
 app.post("/url_shortener/api/shorturl", function(req, res, next) {
     // in case of incorrect function use wait timeout then respond
-    //res.status(500);
     let t = setTimeout(() => {
         next({ message: "timeout" });
     }, TIMEOUT);
     createShortURL(req.body, function(err, data) {
         clearTimeout(t);
         if (err) {
-           // res.status(400);
             return next(err);
-           // return res.json(err);
         }
         if (!data) {
             console.log("Missing `done()` argument");
@@ -585,6 +582,6 @@ app.use(function(req, res) {
     }
 });
 
-const listener = app.listen(process.env.PORT || 3000, function() {
+const listener = app.listen(process.env.PORT || 8000, function() {
     console.log("Your app is listening on port " + listener.address().port);
 });

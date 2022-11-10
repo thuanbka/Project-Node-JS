@@ -15,7 +15,7 @@
     },
     "main": "home.html",
     "scripts": {
-        "start": "node server.js"
+        "start": "node source_server/server.js"
     },
     "repository": {
         "type": "git",
